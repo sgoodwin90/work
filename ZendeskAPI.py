@@ -24,11 +24,11 @@ date_filter = today - timedelta(days=8)
 
 startTime = datetime.now()
 
-search_string = 'type:ticket created>' + date_filter
+search_string = 'type:ticket created>' + str(date_filter)
 
 search_url = 'https://anki.zendesk.com/api/v2/search.json?query=' + search_string
-user = 
-pwd = 
+user = 'sgoodwin@anki.com' + '/token'
+pwd = 'wlekVMUjMxALMZTzZsf1F5liBGjR76FNsCx20tQZ'
 
 ticket_list = []
 
@@ -55,8 +55,8 @@ print('gathering fields from ticket list...')
 for x in ticket_list:
 
     url = 'https://anki.zendesk.com/api/v2/tickets/' + x + '.json'
-    user = 
-    pwd = 
+    user = 'sgoodwin@anki.com' + '/token'
+    pwd = 'wlekVMUjMxALMZTzZsf1F5liBGjR76FNsCx20tQZ'
     
     
     response = requests.get(url, auth=(user, pwd))
@@ -83,6 +83,7 @@ for x in ticket_list:
                     address = str(v)
                 if k == 'name':
                     name = str(v)
+    
     ticket_dict = {
         'ticket':ticket_id,
         'subject':subject,
@@ -96,7 +97,6 @@ for x in ticket_list:
     
     dict_list.append(ticket_dict)
 
-  
 
 merged_dict = defaultdict(list)
 
@@ -125,7 +125,8 @@ print('total time =' + ' ' + str(datetime.now() - startTime))
  
 fromaddr = "sgoodwin@anki.com"
 toaddr = "sgoodwin@anki.com"
- 
+#pw = ""
+
 msg = MIMEMultipart()
  
 msg['From'] = fromaddr
@@ -146,76 +147,10 @@ part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
  
 msg.attach(part)
  
-server = smtplib.SMTP('smtp.gmail.com', 587)
+server = smtplib.SMTP('smtp-relay.gmail.com', 587)
 server.starttls()
-server.login(fromaddr, "")
+#server.login(fromaddr, pw)
 text = msg.as_string()
 server.sendmail(fromaddr, toaddr, text)
 server.quit()
-
-
-
-
------------------------------------------------------------
-
-
-#grab comment data for text search algo
-
-import requests
-import csv
-from collections import defaultdict
-import json
-
-
-#grab list of all ticket ids filtered on created_at based on user input 
-
-date_filter = input('Enter desired date period for all tickets after certain date(format: yyyy-mm-dd):')
-
-search_string = 'type:ticket created>' + date_filter
-
-search_url = 'https://anki.zendesk.com/api/v2/search.json?query=' + search_string
-user = 
-pwd = 
-
-
-search_response = requests.get(search_url, auth=(user, pwd))
-
-search_data = search_response.json()
-
-ticket_list = []
-
-for field in search_data['results']:
-    for k,v in field.items():
-        if k == 'id':
-            ticket_list.append(str(v))
-    
-
-# loop through desired ticket list and output comments as txt file for each ticket
-
-for x in ticket_list:
-
-    url = 'https://anki.zendesk.com/api/v2/tickets/' + x + '/comments.json'
-    user = 
-    pwd = 
-
-    response = requests.get(url, auth=(user, pwd))
-
-    data = response.json()
-
-    dict_list = []
-
-    for comment in data['comments']:
-        for k,v in comment.items():
-            if k == 'id':
-                comment_id = str(v)
-            if k == 'body':
-                comment = str(v)
-            if k == 'created_at':
-                created_date = str(v)
-
-        dict_list.append(comment)
-    
-    with open('ticket' + str(x) + '.txt', 'w') as outfile:
-        outfile.write("\n".join(dict_list))
-
 

@@ -34,7 +34,7 @@ search_string = 'type:ticket created>' + date_filter
 
 search_url = 'https://anki.zendesk.com/api/v2/search.json?query=' + search_string
 user = 'sgoodwin@anki.com' + '/token'
-pwd = 'wlekVMUjMxALMZTzZsf1F5liBGjR76FNsCx20tQZ'
+pwd = ''
 
 
 #gather ticket list based on date filter input
@@ -70,7 +70,7 @@ for x in ticket_list:
 
     url = 'https://anki.zendesk.com/api/v2/tickets/' + x + '/comments.json'
     user = 'sgoodwin@anki.com' + '/token'
-    pwd = 'wlekVMUjMxALMZTzZsf1F5liBGjR76FNsCx20tQZ'
+    pwd = ''
 
     response = requests.get(url, auth=(user, pwd))
 
